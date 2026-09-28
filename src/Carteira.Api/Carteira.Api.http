@@ -1,0 +1,28 @@
+﻿@host = http://localhost:5080
+@orderId = 00000000-0000-0000-0000-000000000001
+
+### Saúde da API
+GET {{host}}/health
+
+### Compra fictícia
+# Troque a Idempotency-Key para criar outra ordem.
+# Reutilize a mesma chave para testar replay.
+POST {{host}}/api/orders
+Content-Type: application/json
+Idempotency-Key: 6f1f9bc7-a4e0-441c-b468-7cf59a202601
+
+{
+  "symbol": "PETR4",
+  "side": "BUY",
+  "quantity": 2,
+  "price": 35.50
+}
+
+### Ordens recentes
+GET {{host}}/api/orders
+
+### Consulte uma ordem: substitua orderId pelo ID retornado no POST
+GET {{host}}/api/orders/{{orderId}}
+
+### Posição do ativo
+GET {{host}}/api/positions/PETR4
