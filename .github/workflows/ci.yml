@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
 
@@ -92,3 +93,49 @@ jobs:
       - name: Build Angular
         working-directory: frontend/carteira-web
         run: npm run build
+
+  release:
+    name: Deliver versioned packages
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish API and Worker
+        run: |
+          dotnet publish src/Carteira.Api/Carteira.Api.csproj -c Release -o "$RUNNER_TEMP/carteira-release/api"
+          dotnet publish src/Carteira.Worker/Carteira.Worker.csproj -c Release -o "$RUNNER_TEMP/carteira-release/worker"
+          mkdir -p release
+          tar -czf release/carteira-api.tar.gz -C "$RUNNER_TEMP/carteira-release/api" .
+          tar -czf release/carteira-worker.tar.gz -C "$RUNNER_TEMP/carteira-release/worker" .
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/carteira-web/package-lock.json
+
+      - name: Build Angular
+        working-directory: frontend/carteira-web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package Angular
+        run: tar -czf release/carteira-angular.tar.gz -C frontend/carteira-web/dist/carteira-web .
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release/*.tar.gz --verify-tag --generate-notes
