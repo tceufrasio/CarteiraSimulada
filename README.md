@@ -12,6 +12,7 @@ a corretoras.
 - Impedir venda acima da posição, inclusive em chamadas concorrentes.
 - Repetir uma ordem com a mesma Idempotency-Key sem duplicá-la.
 - Processar uma notificação secundária com RabbitMQ e Worker.
+- Mostrar o custo das posições abertas e o lucro/prejuízo realizado nas vendas.
 
 ## Requisitos
 
@@ -46,6 +47,7 @@ O painel RabbitMQ local fica em http://localhost:15673 (`carteira` / `carteira_l
 - `GET /api/orders`
 - `GET /api/positions/{symbol}`
 - `GET /api/positions`
+- `GET /api/portfolio/summary`
 
 ## Testes
 

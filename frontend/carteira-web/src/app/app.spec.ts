@@ -25,6 +25,7 @@ describe('App', () => {
               { symbol: 'ITUB4', quantity: 1, averagePrice: 30 },
               { symbol: 'PETR4', quantity: 2, averagePrice: 35.5 }
             ]),
+            getSummary: () => of({ investedAmount: 101, realizedProfitLoss: 3 }),
             create: () => throwError(() => ({
               status: 409,
               error: { error: 'Quantidade indisponível para venda.' }
@@ -47,6 +48,10 @@ describe('App', () => {
     const positions = page.querySelectorAll('.position');
 
     expect(positions).toHaveLength(2);
+    expect(page.textContent).toContain('Investido nas posições abertas');
+    expect(page.textContent).toContain('101,00');
+    expect(page.textContent).toContain('Lucro/prejuízo realizado nas vendas');
+    expect(page.textContent).toContain('3,00');
     expect(page.querySelector('.position-list')?.textContent).toContain('ITUB4');
     expect(page.querySelector('.position-list')?.textContent).toContain('PETR4');
     expect(page.querySelectorAll('tbody tr')).toHaveLength(1);

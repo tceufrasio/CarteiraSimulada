@@ -19,6 +19,11 @@ export interface Position {
   averagePrice: number;
 }
 
+export interface PortfolioSummary {
+  investedAmount: number;
+  realizedProfitLoss: number;
+}
+
 export interface CreateOrder {
   symbol: string;
   side: OrderSide;
@@ -32,6 +37,10 @@ export class OrdersApi {
 
   getRecent() {
     return this.http.get<Order[]>('/api/orders');
+  }
+
+  getSummary() {
+    return this.http.get<PortfolioSummary>('/api/portfolio/summary');
   }
 
   getAllPositions() {

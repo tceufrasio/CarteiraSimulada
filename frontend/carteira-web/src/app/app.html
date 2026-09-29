@@ -30,12 +30,12 @@
         <strong>{{ positions().length }}</strong>
       </div>
       <div class="metric">
-        <span>Ordens recentes</span>
-        <strong>{{ orders().length }}</strong>
+        <span>Investido nas posições abertas</span>
+        <strong>{{ formatMoney(summary().investedAmount) }}</strong>
       </div>
       <div class="metric">
-        <span>Tipo de carteira</span>
-        <strong>Simulada</strong>
+        <span>Lucro/prejuízo realizado nas vendas</span>
+        <strong>{{ formatMoney(summary().realizedProfitLoss) }}</strong>
       </div>
     </section>
 

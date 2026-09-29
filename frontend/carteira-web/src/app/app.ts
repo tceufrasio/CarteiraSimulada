@@ -6,7 +6,8 @@ import {
   Order,
   OrderSide,
   OrdersApi,
-  Position
+  Position,
+  PortfolioSummary
 } from './orders/orders-api';
 
 @Component({
@@ -21,6 +22,7 @@ export class App implements OnInit {
 
   readonly orders = signal<Order[]>([]);
   readonly positions = signal<Position[]>([]);
+  readonly summary = signal<PortfolioSummary>({ investedAmount: 0, realizedProfitLoss: 0 });
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly error = signal('');
@@ -42,13 +44,15 @@ export class App implements OnInit {
     this.error.set('');
 
     try {
-      const [orders, positions] = await Promise.all([
+      const [orders, positions, summary] = await Promise.all([
         firstValueFrom(this.api.getRecent()),
-        firstValueFrom(this.api.getAllPositions())
+        firstValueFrom(this.api.getAllPositions()),
+        firstValueFrom(this.api.getSummary())
       ]);
 
       this.orders.set(orders);
       this.positions.set(positions);
+      this.summary.set(summary);
     } catch {
       this.error.set('Não foi possível carregar a carteira. Confira a API.');
     } finally {

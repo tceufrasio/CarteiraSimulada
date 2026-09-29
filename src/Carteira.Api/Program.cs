@@ -30,6 +30,7 @@ builder.Services.AddScoped<GetRecentOrdersQueryHandler>();
 builder.Services.AddScoped<IPositionOrderReader, EfPositionOrderReader>();
 builder.Services.AddScoped<GetPositionQueryHandler>();
 builder.Services.AddScoped<GetOpenPositionsQueryHandler>();
+builder.Services.AddScoped<GetPortfolioSummaryQueryHandler>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddOpenApi();
@@ -180,6 +181,16 @@ app.MapGet("/api/orders", async (
         order.Price,
         order.CreatedAt
     }));
+});
+app.MapGet("/api/portfolio/summary", async (
+    GetPortfolioSummaryQueryHandler handler,
+    CancellationToken cancellationToken) =>
+{
+    var summary = await handler.HandleAsync(
+        new GetPortfolioSummaryQuery(),
+        cancellationToken);
+
+    return Results.Ok(summary);
 });
 app.MapGet("/api/positions", async (
     GetOpenPositionsQueryHandler handler,
