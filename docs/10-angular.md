@@ -1,4 +1,4 @@
-﻿# 10 — Interface Angular da CarteiraSimulada Lite
+# 10 — Interface Angular da CarteiraSimulada Lite
 
 ## Implementado
 - Angular 22 com formulário de compra e venda fictícia.
@@ -11,7 +11,9 @@
 
 ## Validação
 - npm run build: aprovado.
-- npm test -- --watch=false: 1 teste aprovado.
+- npm test -- --watch=false: 2 testes aprovados.
+- Testes da interface verificam posições ausentes das ordens recentes e
+  a mensagem de conflito de uma venda rejeitada.
 - No navegador: compra exibiu a nova posição.
 - Venda parcial reduziu a quantidade e manteve o preço médio.
 - Venda acima da posição exibiu erro e não alterou a carteira.
