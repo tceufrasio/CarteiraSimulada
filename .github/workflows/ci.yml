@@ -28,10 +28,24 @@ jobs:
           --health-timeout 3s
           --health-retries 10
 
+      rabbitmq:
+        image: rabbitmq:4-management
+        env:
+          RABBITMQ_DEFAULT_USER: carteira
+          RABBITMQ_DEFAULT_PASS: carteira_ci
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
     env:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Carteira: "Host=localhost;Port=5432;Database=carteira_tests;Username=carteira;Password=carteira_ci"
       CARTEIRA_TEST_CONNECTION: "Host=localhost;Port=5432;Database=carteira_tests;Username=carteira;Password=carteira_ci"
+      CARTEIRA_TEST_RABBITMQ: "amqp://carteira:carteira_ci@localhost:5672/"
 
     steps:
       - name: Checkout

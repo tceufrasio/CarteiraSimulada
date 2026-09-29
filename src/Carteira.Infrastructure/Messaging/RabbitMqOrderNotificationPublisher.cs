@@ -9,9 +9,13 @@ public sealed class RabbitMqOrderNotificationPublisher : IOrderNotificationPubli
     public const string QueueName = "carteira.order-notifications";
 
     private readonly ConnectionFactory? _factory;
+    private readonly string _queueName;
 
-    public RabbitMqOrderNotificationPublisher(string? connectionString)
+    public RabbitMqOrderNotificationPublisher(
+        string? connectionString,
+        string queueName = QueueName)
     {
+        _queueName = queueName;
         if (!string.IsNullOrWhiteSpace(connectionString))
         {
             _factory = new ConnectionFactory
@@ -40,7 +44,7 @@ public sealed class RabbitMqOrderNotificationPublisher : IOrderNotificationPubli
             await connection.CreateChannelAsync(options, cancellationToken);
 
         await channel.QueueDeclareAsync(
-            queue: QueueName,
+            queue: _queueName,
             durable: true,
             exclusive: false,
             autoDelete: false,
@@ -59,7 +63,7 @@ public sealed class RabbitMqOrderNotificationPublisher : IOrderNotificationPubli
 
         await channel.BasicPublishAsync(
             exchange: string.Empty,
-            routingKey: QueueName,
+            routingKey: _queueName,
             mandatory: true,
             basicProperties: properties,
             body: body,
