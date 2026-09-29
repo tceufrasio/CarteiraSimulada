@@ -1,4 +1,4 @@
-﻿.shell { min-height: 100vh; }
+.shell { min-height: 100vh; }
 
 .topbar {
   min-height: 76px;
@@ -153,3 +153,6 @@ td { padding: 16px 12px; border-top: 1px solid #e8eeea; font-size: 13px; white-s
   .main-grid { grid-template-columns: 1fr; }
   .panel { padding: 20px; }
 }
+.metric-value-invested { color: #2563a6; }
+.metric-value-profit { color: #16806a; }
+.metric-value-loss { color: #b83d32; }

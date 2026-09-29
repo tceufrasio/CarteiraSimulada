@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   font-family: Inter, "Segoe UI", Arial, sans-serif;
   color: #172a35;
   background: #f4f6f4;
@@ -14,3 +14,65 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 
 button:disabled { cursor: wait; opacity: .65; }
+
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin: 1.25rem 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 6%);
+}
+
+.notification-error {
+  color: #922b21;
+  background: #fff3f0;
+  border-color: #f1c4bc;
+}
+
+.notification-success {
+  color: #116451;
+  background: #ecf8f3;
+  border-color: #aedccc;
+}
+
+.notification-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+}
+
+.notification-error .notification-icon { background: #b83d32; }
+.notification-success .notification-icon { background: #16806a; }
+
+.notification-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+  line-height: 1.45;
+}
+
+.notification-content strong { font-size: 0.95rem; }
+
+.notification-close {
+  padding: 0 0.2rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.notification-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

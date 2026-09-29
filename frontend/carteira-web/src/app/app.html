@@ -18,10 +18,26 @@
     </section>
 
     @if (error()) {
-      <div class="message message-error" role="alert">{{ error() }}</div>
+      <div class="notification notification-error" role="alert">
+        <span class="notification-icon" aria-hidden="true">!</span>
+        <div class="notification-content">
+          <strong>Atenção</strong>
+          <span>{{ error() }}</span>
+        </div>
+        <button type="button" class="notification-close"
+                aria-label="Fechar alerta" (click)="error.set('')">×</button>
+      </div>
     }
     @if (notice()) {
-      <div class="message message-success" role="status">{{ notice() }}</div>
+      <div class="notification notification-success" role="status">
+        <span class="notification-icon" aria-hidden="true">✓</span>
+        <div class="notification-content">
+          <strong>Operação concluída</strong>
+          <span>{{ notice() }}</span>
+        </div>
+        <button type="button" class="notification-close"
+                aria-label="Fechar confirmação" (click)="notice.set('')">×</button>
+      </div>
     }
 
     <section class="overview" aria-label="Resumo">
@@ -31,11 +47,11 @@
       </div>
       <div class="metric">
         <span>Investido nas posições abertas</span>
-        <strong>{{ formatMoney(summary().investedAmount) }}</strong>
+        <strong class="metric-value-invested">{{ formatMoney(summary().investedAmount) }}</strong>
       </div>
       <div class="metric">
         <span>Lucro/prejuízo realizado nas vendas</span>
-        <strong>{{ formatMoney(summary().realizedProfitLoss) }}</strong>
+        <strong [class.metric-value-profit]="summary().realizedProfitLoss > 0" [class.metric-value-loss]="summary().realizedProfitLoss < 0">{{ formatMoney(summary().realizedProfitLoss) }}</strong>
       </div>
     </section>
 
