@@ -19,6 +19,10 @@ a corretoras.
 
 ## Execução local
 
+No PowerShell, defina `$env:ASPNETCORE_ENVIRONMENT = 'Development'` antes
+de aplicar as migrations e iniciar a API. Defina
+`$env:DOTNET_ENVIRONMENT = 'Development'` antes de iniciar o Worker.
+
 1. Na raiz, execute `docker compose up -d` e `dotnet tool restore`.
 2. Configure `ConnectionStrings:Carteira` e `ConnectionStrings:RabbitMq`
    nos user secrets de `src\Carteira.Api` e `src\Carteira.Worker`.
@@ -32,10 +36,7 @@ a corretoras.
 6. Em `frontend\carteira-web`, execute `npm ci` e
    `npm start -- --proxy-config proxy.conf.json`. Abra http://localhost:4200.
 
-No PowerShell, defina `$env:ASPNETCORE_ENVIRONMENT = 'Development'` antes
-de iniciar a API e `$env:DOTNET_ENVIRONMENT = 'Development'` antes de iniciar
-o Worker. O painel RabbitMQ local
-fica em http://localhost:15673 (`carteira` / `carteira_local`).
+O painel RabbitMQ local fica em http://localhost:15673 (`carteira` / `carteira_local`).
 
 ## Endpoints
 
