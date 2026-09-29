@@ -26,4 +26,4 @@ dotnet test tests\Carteira.Tests\Carteira.Tests.csproj
 
 ## Estado
 Dois testes de integração aprovados no PostgreSQL 17 local.
-O CI ainda precisa iniciar PostgreSQL e aplicar migrations antes dos testes.
+O CI inicia PostgreSQL, aplica as migrations e executa os testes. Primeira execução aprovada no GitHub Actions.
