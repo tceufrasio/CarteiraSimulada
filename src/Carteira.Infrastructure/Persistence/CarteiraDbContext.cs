@@ -1,4 +1,4 @@
-﻿using Carteira.Domain.Orders;
+using Carteira.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carteira.Infrastructure.Persistence;
@@ -12,9 +12,20 @@ public sealed class CarteiraDbContext : DbContext
 
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<IdempotencyRecord> IdempotencyRecords => Set<IdempotencyRecord>();
+    public DbSet<ProcessedOrderNotification> ProcessedOrderNotifications => Set<ProcessedOrderNotification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ProcessedOrderNotification>(notification =>
+        {
+            notification.ToTable("processed_order_notifications");
+            notification.HasKey(x => x.OrderId);
+            notification.Property(x => x.Symbol)
+                .HasMaxLength(12)
+                .IsRequired();
+            notification.Property(x => x.ProcessedAt)
+                .IsRequired();
+        });
         modelBuilder.Entity<IdempotencyRecord>(record =>
         {
             record.ToTable("idempotency_records");

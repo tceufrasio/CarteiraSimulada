@@ -1,31 +1,40 @@
 # CarteiraSimulada Lite
 
-Carteira fictÃ­cia para demonstrar uma API .NET 10 com Clean Architecture,
-CQRS, PostgreSQL e idempotÃªncia. NÃ£o movimenta dinheiro nem envia ordens
+Carteira fictícia para demonstrar .NET 10, Clean Architecture, CQRS,
+PostgreSQL, Angular e RabbitMQ. Não movimenta dinheiro nem envia ordens
 a corretoras.
 
-## Funcionalidades atuais
+## Funcionalidades
 
-- Registrar compras e vendas fictÃ­cias.
-- Consultar ordens e posiÃ§Ã£o por ativo.
-- Calcular quantidade e preÃ§o mÃ©dio.
-- Impedir venda acima da posiÃ§Ã£o, inclusive em chamadas concorrentes.
-- Repetir uma ordem com a mesma Idempotency-Key sem duplicÃ¡-la.
-- 29 testes automatizados de domÃ­nio e aplicaÃ§Ã£o, alÃ©m de 1 teste Angular.
+- Registrar compras e vendas fictícias.
+- Consultar ordens e posições por ativo.
+- Calcular quantidade e preço médio.
+- Impedir venda acima da posição, inclusive em chamadas concorrentes.
+- Repetir uma ordem com a mesma Idempotency-Key sem duplicá-la.
+- Processar uma notificação secundária com RabbitMQ e Worker.
 
-## Como executar no PowerShell
+## Requisitos
 
-1. Inicie o banco: `docker compose up -d postgres`.
-2. Restaure a ferramenta: `dotnet tool restore`.
-3. Configure o segredo da API:
-   `dotnet user-secrets set "ConnectionStrings:Carteira" "Host=localhost;Port=15432;Database=carteira;Username=carteira;Password=carteira_local" --project src\Carteira.Api`
-4. Defina o ambiente: `$env:ASPNETCORE_ENVIRONMENT = 'Development'`.
-5. Aplique as migrations:
-   `dotnet tool run dotnet-ef database update --project src\Carteira.Infrastructure --startup-project src\Carteira.Api`
-6. Inicie a API:
-   `dotnet run --project src\Carteira.Api --no-launch-profile --urls http://localhost:5080`
+.NET SDK 10, Docker Desktop, Node.js 24 e npm.
 
-A senha do exemplo serve apenas para o PostgreSQL local em `compose.yaml`.
+## Execução local
+
+1. Na raiz, execute `docker compose up -d` e `dotnet tool restore`.
+2. Configure `ConnectionStrings:Carteira` e `ConnectionStrings:RabbitMq`
+   nos user secrets de `src\Carteira.Api` e `src\Carteira.Worker`.
+   Os comandos completos estão em `docs/12-mensageria.md`.
+3. Aplique as migrations com `dotnet tool run dotnet-ef database update
+   --project src\Carteira.Infrastructure --startup-project src\Carteira.Api`.
+4. Inicie a API com `dotnet run --project src\Carteira.Api
+   --no-launch-profile --urls http://localhost:5080`.
+5. Inicie o Worker com `dotnet run --project src\Carteira.Worker
+   --no-launch-profile`.
+6. Em `frontend\carteira-web`, execute `npm ci` e
+   `npm start -- --proxy-config proxy.conf.json`. Abra http://localhost:4200.
+
+Use `ASPNETCORE_ENVIRONMENT=Development` para a API e
+`DOTNET_ENVIRONMENT=Development` para o Worker. O painel RabbitMQ local
+fica em http://localhost:15673 (`carteira` / `carteira_local`).
 
 ## Endpoints
 
@@ -36,16 +45,17 @@ A senha do exemplo serve apenas para o PostgreSQL local em `compose.yaml`.
 - `GET /api/positions/{symbol}`
 - `GET /api/positions`
 
-## ValidaÃ§Ã£o
+## Testes
 
-Execute `dotnet build` e `dotnet test tests\Carteira.Tests\Carteira.Tests.csproj` para os testes rápidos. Os testes com PostgreSQL estão em `docs/11-testes-integracao.md`. Para o Angular, execute `npm run build` e `npm test -- --watch=false` em `frontend/carteira-web`.
+Execute `dotnet build CarteiraSimulada.sln` e
+`dotnet test tests\Carteira.Tests\Carteira.Tests.csproj`.
+Os testes PostgreSQL estão em `docs/11-testes-integracao.md`.
+Em `frontend\carteira-web`, execute `npm run build` e
+`npm test -- --watch=false`. O GitHub Actions executa o pipeline na `main`.
 
-## Estado
+## Limites
 
-RabbitMQ, Worker, CI/CD e testes de integraÃ§Ã£o automatizados
-ainda estÃ£o pendentes. A aplicaÃ§Ã£o tem uma Ãºnica carteira fictÃ­cia, sem
-contas de usuÃ¡rio, autenticaÃ§Ã£o ou cotaÃ§Ãµes automÃ¡ticas. O endpoint
-`/health` nÃ£o verifica a conexÃ£o com o PostgreSQL.
-
-Consulte `docs/08-escopo-lite.md` para o escopo, `docs/10-angular.md` para a interface e `docs/09-posicoes.md`
-para as regras e os testes de posiÃ§Ã£o.
+Há uma carteira fictícia compartilhada, sem usuários, autenticação
+ou cotações automáticas. O endpoint `/health` não verifica o PostgreSQL.
+Sem Outbox, uma notificação pode ser perdida após gravar a ordem;
+a carteira permanece correta. Veja `docs/12-mensageria.md`.

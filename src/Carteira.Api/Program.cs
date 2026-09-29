@@ -3,6 +3,8 @@ using Carteira.Application.Orders.Commands;
 using Carteira.Application.Orders.Queries;
 using Carteira.Application.Positions.Queries;
 using Carteira.Domain.Orders;
+using Carteira.Application.Orders.Notifications;
+using Carteira.Infrastructure.Messaging;
 using Carteira.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +20,10 @@ builder.Services.AddDbContext<CarteiraDbContext>(options =>
 
 builder.Services.AddScoped<IIdempotentOrderWriter, EfIdempotentOrderWriter>();
 builder.Services.AddScoped<RegisterOrderCommandHandler>();
+var rabbitMqConnection = builder.Configuration.GetConnectionString("RabbitMq");
+
+builder.Services.AddSingleton<IOrderNotificationPublisher>(
+    new RabbitMqOrderNotificationPublisher(rabbitMqConnection));
 builder.Services.AddScoped<IOrderQueryRepository, EfOrderQueryRepository>();
 builder.Services.AddScoped<GetOrderByIdQueryHandler>();
 builder.Services.AddScoped<GetRecentOrdersQueryHandler>();
@@ -41,6 +47,8 @@ app.MapPost("/api/orders", async (
     HttpRequest httpRequest,
     CreateOrderRequest request,
     RegisterOrderCommandHandler handler,
+    IOrderNotificationPublisher publisher,
+    ILogger<Program> logger,
     CancellationToken cancellationToken) =>
 {
     if (!httpRequest.Headers.TryGetValue("Idempotency-Key", out var values) ||
@@ -86,6 +94,29 @@ app.MapPost("/api/orders", async (
         }
 
         var order = result.Order!;
+
+        if (result.Status == RegisterOrderStatus.Created)
+        {
+            try
+            {
+                using var timeout = new CancellationTokenSource(
+                    TimeSpan.FromSeconds(5));
+
+                await publisher.PublishAsync(
+                    new OrderRegisteredNotification(
+                        order.Id,
+                        order.Symbol,
+                        order.CreatedAt),
+                    timeout.Token);
+            }
+            catch (Exception exception)
+            {
+                logger.LogWarning(
+                    exception,
+                    "Order {OrderId} was saved, but its notification was not published.",
+                    order.Id);
+            }
+        }
 
         var response = new
         {

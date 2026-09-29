@@ -7,6 +7,8 @@
   uma venda persistida.
 - Cada cenário usa identificadores próprios e remove seus registros ao final.
 
+- Processar duas vezes a mesma notificação registra apenas um OrderId.
+
 ## Preparação local
 1. Iniciar o PostgreSQL com docker compose up -d postgres.
 2. Criar o banco carteira_tests se ele ainda não existir.
@@ -25,5 +27,5 @@ Para rodar apenas os 29 testes de domínio e aplicação:
 dotnet test tests\Carteira.Tests\Carteira.Tests.csproj
 
 ## Estado
-Dois testes de integração aprovados no PostgreSQL 17 local.
+Três testes de integração aprovados no PostgreSQL 17 local.
 O CI inicia PostgreSQL, aplica as migrations e executa os testes. Primeira execução aprovada no GitHub Actions.

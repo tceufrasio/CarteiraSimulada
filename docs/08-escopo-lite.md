@@ -1,4 +1,4 @@
-﻿# 08 — Escopo da CarteiraSimulada Lite
+# 08 — Escopo da CarteiraSimulada Lite
 
 ## Objetivo
 Aplicação pública de portfólio para registrar operações fictícias e visualizar
@@ -35,5 +35,4 @@ para o Worker poderá falhar sem tornar incorretos os dados da carteira.
 - Outbox.
 
 ## Estado
-Escopo definido. API de ordens e consultas implementada; posições,
-Angular, mensageria e publicação ainda pendentes.
+API, posições, Angular e mensageria secundária implementados. Testes locais aprovados; validação final do CI desta etapa pendente.

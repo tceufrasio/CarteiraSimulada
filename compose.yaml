@@ -16,6 +16,23 @@
       timeout: 3s
       retries: 10
 
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: carteira-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: carteira
+      RABBITMQ_DEFAULT_PASS: carteira_local
+    ports:
+      - "127.0.0.1:5673:5672"
+      - "127.0.0.1:15673:15672"
+    volumes:
+      - carteira_rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
 volumes:
   carteira_postgres_data:
-
+  carteira_rabbitmq_data:
