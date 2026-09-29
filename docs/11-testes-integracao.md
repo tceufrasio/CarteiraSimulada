@@ -1,4 +1,4 @@
-# 11 — Testes de integração PostgreSQL
+# 11 — Testes de integração PostgreSQL e RabbitMQ
 
 ## O que verificam
 - Primeira gravação cria a ordem; a mesma chave e pedido retornam a ordem

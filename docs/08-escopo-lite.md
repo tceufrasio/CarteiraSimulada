@@ -21,7 +21,7 @@ decisões técnicas e testes.
 - Docker Compose para desenvolvimento local.
 - RabbitMQ para tarefa não crítica, com confirmação de publicação,
   consumidor idempotente, retry limitado e fila de falhas.
-- CI/CD e documentação de instalação e arquitetura.
+- CI com build e testes automatizados; documentação de instalação e arquitetura.
 
 ## Limite da mensageria
 RabbitMQ não será a fonte da posição da carteira. A gravação no PostgreSQL

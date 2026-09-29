@@ -32,8 +32,9 @@ a corretoras.
 6. Em `frontend\carteira-web`, execute `npm ci` e
    `npm start -- --proxy-config proxy.conf.json`. Abra http://localhost:4200.
 
-Use `ASPNETCORE_ENVIRONMENT=Development` para a API e
-`DOTNET_ENVIRONMENT=Development` para o Worker. O painel RabbitMQ local
+No PowerShell, defina `$env:ASPNETCORE_ENVIRONMENT = 'Development'` antes
+de iniciar a API e `$env:DOTNET_ENVIRONMENT = 'Development'` antes de iniciar
+o Worker. O painel RabbitMQ local
 fica em http://localhost:15673 (`carteira` / `carteira_local`).
 
 ## Endpoints
@@ -49,7 +50,7 @@ fica em http://localhost:15673 (`carteira` / `carteira_local`).
 
 Execute `dotnet build CarteiraSimulada.sln` e
 `dotnet test tests\Carteira.Tests\Carteira.Tests.csproj`.
-Os testes PostgreSQL estão em `docs/11-testes-integracao.md`.
+Os testes de integração com PostgreSQL e RabbitMQ estão em `docs/11-testes-integracao.md`.
 Em `frontend\carteira-web`, execute `npm run build` e
 `npm test -- --watch=false`. O GitHub Actions executa o pipeline na `main`.
 
