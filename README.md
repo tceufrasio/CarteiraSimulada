@@ -1,17 +1,17 @@
 # CarteiraSimulada Lite
 
-Carteira fictícia para demonstrar uma API .NET 10 com Clean Architecture,
-CQRS, PostgreSQL e idempotência. Não movimenta dinheiro nem envia ordens
+Carteira fictÃ­cia para demonstrar uma API .NET 10 com Clean Architecture,
+CQRS, PostgreSQL e idempotÃªncia. NÃ£o movimenta dinheiro nem envia ordens
 a corretoras.
 
 ## Funcionalidades atuais
 
-- Registrar compras e vendas fictícias.
-- Consultar ordens e posição por ativo.
-- Calcular quantidade e preço médio.
-- Impedir venda acima da posição, inclusive em chamadas concorrentes.
-- Repetir uma ordem com a mesma Idempotency-Key sem duplicá-la.
-- 29 testes automatizados de domínio e aplicação, além de 1 teste Angular.
+- Registrar compras e vendas fictÃ­cias.
+- Consultar ordens e posiÃ§Ã£o por ativo.
+- Calcular quantidade e preÃ§o mÃ©dio.
+- Impedir venda acima da posiÃ§Ã£o, inclusive em chamadas concorrentes.
+- Repetir uma ordem com a mesma Idempotency-Key sem duplicÃ¡-la.
+- 29 testes automatizados de domÃ­nio e aplicaÃ§Ã£o, alÃ©m de 1 teste Angular.
 
 ## Como executar no PowerShell
 
@@ -36,16 +36,16 @@ A senha do exemplo serve apenas para o PostgreSQL local em `compose.yaml`.
 - `GET /api/positions/{symbol}`
 - `GET /api/positions`
 
-## Validação
+## ValidaÃ§Ã£o
 
-Execute `dotnet build` e `dotnet test`. Para o Angular, execute `npm run build` e `npm test -- --watch=false` em `frontend/carteira-web`.
+Execute `dotnet build` e `dotnet test tests\Carteira.Tests\Carteira.Tests.csproj` para os testes rápidos. Os testes com PostgreSQL estão em `docs/11-testes-integracao.md`. Para o Angular, execute `npm run build` e `npm test -- --watch=false` em `frontend/carteira-web`.
 
 ## Estado
 
-RabbitMQ, Worker, CI/CD e testes de integração automatizados
-ainda estão pendentes. A aplicação tem uma única carteira fictícia, sem
-contas de usuário, autenticação ou cotações automáticas. O endpoint
-`/health` não verifica a conexão com o PostgreSQL.
+RabbitMQ, Worker, CI/CD e testes de integraÃ§Ã£o automatizados
+ainda estÃ£o pendentes. A aplicaÃ§Ã£o tem uma Ãºnica carteira fictÃ­cia, sem
+contas de usuÃ¡rio, autenticaÃ§Ã£o ou cotaÃ§Ãµes automÃ¡ticas. O endpoint
+`/health` nÃ£o verifica a conexÃ£o com o PostgreSQL.
 
 Consulte `docs/08-escopo-lite.md` para o escopo, `docs/10-angular.md` para a interface e `docs/09-posicoes.md`
-para as regras e os testes de posição.
+para as regras e os testes de posiÃ§Ã£o.

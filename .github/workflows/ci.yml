@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: carteira_tests
+          POSTGRES_USER: carteira
+          POSTGRES_PASSWORD: carteira_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U carteira -d carteira_tests"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Carteira: "Host=localhost;Port=5432;Database=carteira_tests;Username=carteira;Password=carteira_ci"
+      CARTEIRA_TEST_CONNECTION: "Host=localhost;Port=5432;Database=carteira_tests;Username=carteira;Password=carteira_ci"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore .NET
+        run: dotnet restore CarteiraSimulada.sln
+
+      - name: Restore EF tool
+        run: dotnet tool restore
+
+      - name: Build .NET
+        run: dotnet build CarteiraSimulada.sln --no-restore
+
+      - name: Apply migrations to test database
+        run: dotnet tool run dotnet-ef database update --project src/Carteira.Infrastructure --startup-project src/Carteira.Api
+
+      - name: Unit tests
+        run: dotnet test tests/Carteira.Tests/Carteira.Tests.csproj --no-restore
+
+      - name: PostgreSQL integration tests
+        run: dotnet test tests/Carteira.IntegrationTests/Carteira.IntegrationTests.csproj --no-restore
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/carteira-web/package-lock.json
+
+      - name: Install Angular dependencies
+        working-directory: frontend/carteira-web
+        run: npm ci
+
+      - name: Angular tests
+        working-directory: frontend/carteira-web
+        run: npm test -- --watch=false
+
+      - name: Build Angular
+        working-directory: frontend/carteira-web
+        run: npm run build
