@@ -228,3 +228,5 @@ app.MapGet("/api/positions/{symbol}", async (
 app.Run();
 
 record CreateOrderRequest(string Symbol, string Side, decimal Quantity, decimal Price);
+
+public partial class Program { }
