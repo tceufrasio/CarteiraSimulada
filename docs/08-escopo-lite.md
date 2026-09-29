@@ -35,4 +35,4 @@ para o Worker poderá falhar sem tornar incorretos os dados da carteira.
 - Outbox.
 
 ## Estado
-API, posições, Angular e mensageria secundária implementados. Testes locais aprovados; validação final do CI desta etapa pendente.
+API, posições, Angular e mensageria secundária implementados. Testes locais e CI da etapa de mensageria aprovados.
