@@ -1,0 +1,155 @@
+﻿.shell { min-height: 100vh; }
+
+.topbar {
+  min-height: 76px;
+  padding: 16px max(24px, calc((100vw - 1160px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #102c35;
+  color: #fff;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand strong, .brand small { display: block; }
+.brand strong { font-size: 17px; letter-spacing: -.02em; }
+.brand small { margin-top: 3px; color: #b8ced0; font-size: 12px; }
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #a9ebcd;
+  color: #102c35;
+  font-weight: 800;
+}
+
+.demo-label {
+  border: 1px solid #678a89;
+  border-radius: 100px;
+  padding: 8px 12px;
+  color: #d6ebe6;
+  font-size: 12px;
+}
+
+main { max-width: 1208px; margin: auto; padding: 42px 24px 80px; }
+
+.intro { max-width: 760px; margin-bottom: 34px; }
+.eyebrow {
+  margin: 0 0 9px;
+  color: #167c69;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+.intro h1 {
+  max-width: 690px;
+  margin: 0;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -.045em;
+}
+.intro > p:last-child { color: #65747a; line-height: 1.6; }
+
+.overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.metric, .panel {
+  background: #fff;
+  border: 1px solid #e3e9e5;
+  border-radius: 16px;
+  box-shadow: 0 4px 22px #18393408;
+}
+.metric { padding: 22px 24px; }
+.metric span, .metric strong { display: block; }
+.metric span { color: #66767b; font-size: 13px; }
+.metric strong { margin-top: 12px; font-size: 26px; letter-spacing: -.04em; }
+
+.main-grid {
+  display: grid;
+  grid-template-columns: minmax(310px, .85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 20px;
+}
+.panel { padding: 26px; }
+.panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+h2 { margin: 0; font-size: 22px; letter-spacing: -.035em; }
+
+form label {
+  display: block;
+  margin: 17px 0 7px;
+  font-size: 13px;
+  font-weight: 700;
+}
+form input, form select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #cddbd4;
+  border-radius: 9px;
+  background: #fff;
+  color: #172a35;
+}
+form input:focus, form select:focus {
+  outline: 2px solid #66bba1;
+  outline-offset: 1px;
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-hint { margin: 19px 0; color: #65747a; font-size: 12px; line-height: 1.5; }
+form button {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 9px;
+  background: #126c5a;
+  color: #fff;
+  font-weight: 700;
+}
+form button:hover:not(:disabled) { background: #0c5849; }
+
+.text-button {
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: #126c5a;
+  font-size: 13px;
+  font-weight: 700;
+}
+.empty-state { padding: 22px 0; color: #718086; line-height: 1.5; }
+.position { display: flex; justify-content: space-between; gap: 16px; padding: 17px 0; border-top: 1px solid #e8eeea; }
+.position strong, .position span { display: block; }
+.position span { margin-top: 5px; color: #718086; font-size: 12px; }
+.position-values { text-align: right; }
+
+.history { margin-top: 20px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { padding: 12px; color: #728087; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+td { padding: 16px 12px; border-top: 1px solid #e8eeea; font-size: 13px; white-space: nowrap; }
+.side { color: #116e55; font-weight: 700; }
+.side.sell { color: #a35a35; }
+.message { margin: 0 0 18px; padding: 14px 16px; border-radius: 9px; }
+.message-error { background: #fff0eb; color: #913b30; }
+.message-success { background: #e8f7ed; color: #176248; }
+
+@media (max-width: 760px) {
+  .topbar { padding: 15px 20px; }
+  .demo-label { display: none; }
+  main { padding: 30px 16px 56px; }
+  .overview { grid-template-columns: 1fr 1fr; }
+  .overview .metric:last-child { grid-column: 1 / -1; }
+  .main-grid { grid-template-columns: 1fr; }
+  .panel { padding: 20px; }
+}

@@ -1,4 +1,4 @@
-﻿using Carteira.Application.Positions.Queries;
+using Carteira.Application.Positions.Queries;
 using Carteira.Domain.Orders;
 
 namespace Carteira.Tests;
@@ -72,6 +72,11 @@ public class GetPositionQueryTests
 
         public string? RequestedSymbol { get; private set; }
 
+        public Task<IReadOnlyList<Order>> GetAllAsync(
+            CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_orders);
+        }
         public Task<IReadOnlyList<Order>> GetBySymbolAsync(
             string symbol,
             CancellationToken cancellationToken)

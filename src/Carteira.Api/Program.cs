@@ -1,4 +1,4 @@
-﻿using Carteira.Application.Orders;
+using Carteira.Application.Orders;
 using Carteira.Application.Orders.Commands;
 using Carteira.Application.Orders.Queries;
 using Carteira.Application.Positions.Queries;
@@ -23,6 +23,7 @@ builder.Services.AddScoped<GetOrderByIdQueryHandler>();
 builder.Services.AddScoped<GetRecentOrdersQueryHandler>();
 builder.Services.AddScoped<IPositionOrderReader, EfPositionOrderReader>();
 builder.Services.AddScoped<GetPositionQueryHandler>();
+builder.Services.AddScoped<GetOpenPositionsQueryHandler>();
 builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddOpenApi();
@@ -149,6 +150,21 @@ app.MapGet("/api/orders", async (
         order.CreatedAt
     }));
 });
+app.MapGet("/api/positions", async (
+    GetOpenPositionsQueryHandler handler,
+    CancellationToken cancellationToken) =>
+{
+    var positions = await handler.HandleAsync(
+        new GetOpenPositionsQuery(),
+        cancellationToken);
+
+    return Results.Ok(positions.Select(position => new
+    {
+        position.Symbol,
+        position.Quantity,
+        position.AveragePrice
+    }));
+});
 app.MapGet("/api/positions/{symbol}", async (
     string symbol,
     GetPositionQueryHandler handler,
@@ -181,12 +197,3 @@ app.MapGet("/api/positions/{symbol}", async (
 app.Run();
 
 record CreateOrderRequest(string Symbol, string Side, decimal Quantity, decimal Price);
-
-
-
-
-
-
-
-
-

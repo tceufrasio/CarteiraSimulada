@@ -1,4 +1,4 @@
-﻿# CarteiraSimulada Lite
+# CarteiraSimulada Lite
 
 Carteira fictícia para demonstrar uma API .NET 10 com Clean Architecture,
 CQRS, PostgreSQL e idempotência. Não movimenta dinheiro nem envia ordens
@@ -11,7 +11,7 @@ a corretoras.
 - Calcular quantidade e preço médio.
 - Impedir venda acima da posição, inclusive em chamadas concorrentes.
 - Repetir uma ordem com a mesma Idempotency-Key sem duplicá-la.
-- 28 testes automatizados de domínio e aplicação.
+- 29 testes automatizados de domínio e aplicação, além de 1 teste Angular.
 
 ## Como executar no PowerShell
 
@@ -34,17 +34,18 @@ A senha do exemplo serve apenas para o PostgreSQL local em `compose.yaml`.
 - `GET /api/orders/{id}`
 - `GET /api/orders`
 - `GET /api/positions/{symbol}`
+- `GET /api/positions`
 
 ## Validação
 
-Execute `dotnet build` e `dotnet test`.
+Execute `dotnet build` e `dotnet test`. Para o Angular, execute `npm run build` e `npm test -- --watch=false` em `frontend/carteira-web`.
 
 ## Estado
 
-Angular, RabbitMQ, Worker, CI/CD e testes de integração automatizados
+RabbitMQ, Worker, CI/CD e testes de integração automatizados
 ainda estão pendentes. A aplicação tem uma única carteira fictícia, sem
 contas de usuário, autenticação ou cotações automáticas. O endpoint
 `/health` não verifica a conexão com o PostgreSQL.
 
-Consulte `docs/08-escopo-lite.md` para o escopo e `docs/09-posicoes.md`
+Consulte `docs/08-escopo-lite.md` para o escopo, `docs/10-angular.md` para a interface e `docs/09-posicoes.md`
 para as regras e os testes de posição.

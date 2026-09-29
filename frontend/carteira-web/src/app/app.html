@@ -1,0 +1,164 @@
+﻿<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">C</span>
+      <div>
+        <strong>CarteiraSimulada</strong>
+        <small>Ambiente de simulação · Lite</small>
+      </div>
+    </div>
+    <span class="demo-label">Sem operações reais</span>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="eyebrow">VISÃO GERAL</p>
+      <h1>Seu espaço para testar decisões de investimento.</h1>
+      <p>Registre operações fictícias e acompanhe a quantidade e o preço médio de cada ativo.</p>
+    </section>
+
+    @if (error()) {
+      <div class="message message-error" role="alert">{{ error() }}</div>
+    }
+    @if (notice()) {
+      <div class="message message-success" role="status">{{ notice() }}</div>
+    }
+
+    <section class="overview" aria-label="Resumo">
+      <div class="metric">
+        <span>Ativos em carteira</span>
+        <strong>{{ positions().length }}</strong>
+      </div>
+      <div class="metric">
+        <span>Ordens recentes</span>
+        <strong>{{ orders().length }}</strong>
+      </div>
+      <div class="metric">
+        <span>Tipo de carteira</span>
+        <strong>Simulada</strong>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">NOVA OPERAÇÃO</p>
+            <h2>Registrar ordem</h2>
+          </div>
+        </div>
+
+        <form (ngSubmit)="submit()">
+          <label for="symbol">Código do ativo</label>
+          <input id="symbol" name="symbol" type="text" maxlength="12"
+                 placeholder="Ex.: PETR4" autocomplete="off"
+                 [(ngModel)]="form.symbol" required>
+
+          <label for="side">Operação</label>
+          <select id="side" name="side" [(ngModel)]="form.side">
+            <option value="BUY">Compra</option>
+            <option value="SELL">Venda</option>
+          </select>
+
+          <div class="field-row">
+            <div>
+              <label for="quantity">Quantidade</label>
+              <input id="quantity" name="quantity" type="number"
+                     min="0.0001" step="0.0001"
+                     [(ngModel)]="form.quantity" required>
+            </div>
+            <div>
+              <label for="price">Preço unitário (R$)</label>
+              <input id="price" name="price" type="number"
+                     min="0.01" step="0.01"
+                     [(ngModel)]="form.price" required>
+            </div>
+          </div>
+
+          <p class="form-hint">As operações são fictícias e usam o preço informado por você.</p>
+          <button type="submit" [disabled]="saving()">
+            {{ saving() ? 'Registrando...' : 'Registrar operação' }}
+          </button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">CARTEIRA</p>
+            <h2>Posições abertas</h2>
+          </div>
+          <button class="text-button" type="button"
+                  (click)="refresh()" [disabled]="loading()">
+            Atualizar
+          </button>
+        </div>
+
+        @if (loading()) {
+          <p class="empty-state">Carregando posições...</p>
+        } @else if (positions().length === 0) {
+          <p class="empty-state">Nenhuma posição aberta. Registre uma compra para começar.</p>
+        } @else {
+          <div class="position-list">
+            @for (position of positions(); track position.symbol) {
+              <div class="position">
+                <div>
+                  <strong>{{ position.symbol }}</strong>
+                  <span>{{ position.quantity }} unidades</span>
+                </div>
+                <div class="position-values">
+                  <strong>{{ formatMoney(position.quantity * position.averagePrice) }}</strong>
+                  <span>Preço médio: {{ formatMoney(position.averagePrice) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+
+    <section class="panel history">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">HISTÓRICO</p>
+          <h2>Ordens recentes</h2>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <p class="empty-state">Carregando ordens...</p>
+      } @else if (orders().length === 0) {
+        <p class="empty-state">Ainda não há ordens registradas.</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ativo</th>
+                <th>Operação</th>
+                <th>Quantidade</th>
+                <th>Preço</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of orders(); track order.id) {
+                <tr>
+                  <td><strong>{{ order.symbol }}</strong></td>
+                  <td>
+                    <span class="side" [class.sell]="order.side === 'SELL'">
+                      {{ order.side === 'BUY' ? 'Compra' : 'Venda' }}
+                    </span>
+                  </td>
+                  <td>{{ order.quantity }}</td>
+                  <td>{{ formatMoney(order.price) }}</td>
+                  <td>{{ formatDate(order.createdAt) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </main>
+</div>

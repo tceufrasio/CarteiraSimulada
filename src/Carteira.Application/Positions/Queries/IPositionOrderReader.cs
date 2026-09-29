@@ -7,4 +7,7 @@ public interface IPositionOrderReader
     Task<IReadOnlyList<Order>> GetBySymbolAsync(
         string symbol,
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Order>> GetAllAsync(
+        CancellationToken cancellationToken);
 }

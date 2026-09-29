@@ -23,5 +23,13 @@ public sealed class EfPositionOrderReader : IPositionOrderReader
             .OrderBy(order => order.Sequence)
             .ToListAsync(cancellationToken);
     }
-}
 
+    public async Task<IReadOnlyList<Order>> GetAllAsync(
+        CancellationToken cancellationToken)
+    {
+        return await _dbContext.Orders
+            .AsNoTracking()
+            .OrderBy(order => order.Sequence)
+            .ToListAsync(cancellationToken);
+    }
+}
