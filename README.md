@@ -13,6 +13,7 @@ a corretoras.
 - Repetir uma ordem com a mesma Idempotency-Key sem duplicá-la.
 - Processar uma notificação secundária com RabbitMQ e Worker.
 - Mostrar o custo das posições abertas e o lucro/prejuízo realizado nas vendas.
+- Consultar posições e o histórico de ordens com busca e paginação.
 
 ## Requisitos
 
@@ -45,6 +46,7 @@ O painel RabbitMQ local fica em http://localhost:15673 (`carteira` / `carteira_l
 - `POST /api/orders` (exige Idempotency-Key com UUID)
 - `GET /api/orders/{id}`
 - `GET /api/orders`
+- `GET /api/orders/search?page=1&pageSize=10&symbol=PETR4&side=BUY`
 - `GET /api/positions/{symbol}`
 - `GET /api/positions`
 - `GET /api/portfolio/summary`

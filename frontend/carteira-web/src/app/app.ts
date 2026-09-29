@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -28,6 +28,35 @@ export class App implements OnInit {
   readonly error = signal('');
   readonly notice = signal('');
 
+  readonly positionSearch = signal('');
+  readonly positionPage = signal(1);
+  readonly positionPageSize = 8;
+  readonly filteredPositions = computed(() => {
+    const term = this.positionSearch().trim().toUpperCase();
+    return this.positions().filter(position => position.symbol.includes(term));
+  });
+  readonly positionPageCount = computed(() =>
+    Math.max(1, Math.ceil(this.filteredPositions().length / this.positionPageSize))
+  );
+  readonly currentPositionPage = computed(() =>
+    Math.min(this.positionPage(), this.positionPageCount())
+  );
+  readonly visiblePositions = computed(() => {
+    const start = (this.currentPositionPage() - 1) * this.positionPageSize;
+    return this.filteredPositions().slice(start, start + this.positionPageSize);
+  });
+
+  orderSearch = '';
+  orderSide = '';
+  readonly orderPage = signal(1);
+  readonly orderPageSize = 10;
+  readonly orderTotal = signal(0);
+  readonly orderPageCount = computed(() =>
+    Math.max(1, Math.ceil(this.orderTotal() / this.orderPageSize))
+  );
+  readonly loadingOrders = signal(false);
+  private orderRequestId = 0;
+
   form: CreateOrder = {
     symbol: '',
     side: 'BUY',
@@ -44,19 +73,60 @@ export class App implements OnInit {
     this.error.set('');
 
     try {
-      const [orders, positions, summary] = await Promise.all([
-        firstValueFrom(this.api.getRecent()),
+      const [positions, summary] = await Promise.all([
         firstValueFrom(this.api.getAllPositions()),
-        firstValueFrom(this.api.getSummary())
+        firstValueFrom(this.api.getSummary()),
+        this.loadOrders()
       ]);
 
-      this.orders.set(orders);
       this.positions.set(positions);
       this.summary.set(summary);
     } catch {
       this.error.set('Não foi possível carregar a carteira. Confira a API.');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  setPositionSearch(value: string): void {
+    this.positionSearch.set(value);
+    this.positionPage.set(1);
+  }
+
+  setPositionPage(page: number): void {
+    if (page >= 1 && page <= this.positionPageCount())
+      this.positionPage.set(page);
+  }
+
+  searchOrders(): void {
+    this.orderPage.set(1);
+    void this.loadOrders();
+  }
+
+  setOrderPage(page: number): void {
+    if (page < 1 || page > this.orderPageCount()) return;
+    this.orderPage.set(page);
+    void this.loadOrders();
+  }
+
+  async loadOrders(): Promise<void> {
+    const requestId = ++this.orderRequestId;
+    this.loadingOrders.set(true);
+    try {
+      const result = await firstValueFrom(this.api.searchOrders(
+        this.orderPage(),
+        this.orderPageSize,
+        this.orderSearch.trim().toUpperCase(),
+        this.orderSide
+      ));
+      if (requestId !== this.orderRequestId) return;
+      this.orders.set(result.items);
+      this.orderTotal.set(result.totalCount);
+    } catch {
+      if (requestId !== this.orderRequestId) return;
+      this.error.set('Não foi possível consultar as ordens. Confira a API.');
+    } finally {
+      if (requestId === this.orderRequestId) this.loadingOrders.set(false);
     }
   }
 

@@ -24,6 +24,13 @@ export interface PortfolioSummary {
   realizedProfitLoss: number;
 }
 
+export interface OrderPage {
+  items: Order[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface CreateOrder {
   symbol: string;
   side: OrderSide;
@@ -37,6 +44,15 @@ export class OrdersApi {
 
   getRecent() {
     return this.http.get<Order[]>('/api/orders');
+  }
+
+  searchOrders(page: number, pageSize: number, symbol: string, side: string) {
+    const params: Record<string, string> = {
+      page: String(page), pageSize: String(pageSize)
+    };
+    if (symbol) params['symbol'] = symbol;
+    if (side) params['side'] = side;
+    return this.http.get<OrderPage>('/api/orders/search', { params });
   }
 
   getSummary() {

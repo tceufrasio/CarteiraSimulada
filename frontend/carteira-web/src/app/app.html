@@ -110,25 +110,49 @@
           </button>
         </div>
 
+        <div class="list-toolbar">
+          <label class="search-field" for="position-search">
+            <span>Consultar ativo</span>
+            <input id="position-search" type="search" placeholder="Buscar por código, ex.: PETR4"
+                   [ngModel]="positionSearch()"
+                   (ngModelChange)="setPositionSearch($event)">
+          </label>
+          <span class="result-count">{{ filteredPositions().length }} posições</span>
+        </div>
+
         @if (loading()) {
           <p class="empty-state">Carregando posições...</p>
         } @else if (positions().length === 0) {
           <p class="empty-state">Nenhuma posição aberta. Registre uma compra para começar.</p>
+        } @else if (filteredPositions().length === 0) {
+          <p class="empty-state">Nenhum ativo encontrado para esta consulta.</p>
         } @else {
-          <div class="position-list">
-            @for (position of positions(); track position.symbol) {
-              <div class="position">
-                <div>
-                  <strong>{{ position.symbol }}</strong>
-                  <span>{{ position.quantity }} unidades</span>
-                </div>
-                <div class="position-values">
-                  <strong>{{ formatMoney(position.quantity * position.averagePrice) }}</strong>
-                  <span>Preço médio: {{ formatMoney(position.averagePrice) }}</span>
-                </div>
-              </div>
-            }
+          <div class="position-list table-wrap">
+            <table class="positions-table">
+              <thead>
+                <tr><th>Ativo</th><th>Quantidade</th><th>Preço médio</th><th>Investido</th></tr>
+              </thead>
+              <tbody>
+                @for (position of visiblePositions(); track position.symbol) {
+                  <tr class="position">
+                    <td><strong>{{ position.symbol }}</strong></td>
+                    <td>{{ position.quantity }}</td>
+                    <td>{{ formatMoney(position.averagePrice) }}</td>
+                    <td><strong>{{ formatMoney(position.quantity * position.averagePrice) }}</strong></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
+          <nav class="pagination" aria-label="Páginas das posições">
+            <span>Página {{ currentPositionPage() }} de {{ positionPageCount() }}</span>
+            <div>
+              <button type="button" (click)="setPositionPage(currentPositionPage() - 1)"
+                      [disabled]="currentPositionPage() === 1">Anterior</button>
+              <button type="button" (click)="setPositionPage(currentPositionPage() + 1)"
+                      [disabled]="currentPositionPage() === positionPageCount()">Próxima</button>
+            </div>
+          </nav>
         }
       </section>
     </div>
@@ -137,14 +161,33 @@
       <div class="panel-heading">
         <div>
           <p class="eyebrow">HISTÓRICO</p>
-          <h2>Ordens recentes</h2>
+          <h2>Histórico de ordens</h2>
         </div>
       </div>
 
-      @if (loading()) {
+      <div class="list-toolbar orders-toolbar">
+        <label class="search-field" for="order-search">
+          <span>Consultar ativo</span>
+          <input id="order-search" type="search" placeholder="Buscar em todo o histórico"
+                 [(ngModel)]="orderSearch" (keyup.enter)="searchOrders()">
+        </label>
+        <label class="side-filter" for="order-side">
+          <span>Operação</span>
+          <select id="order-side" [ngModel]="orderSide"
+                  (ngModelChange)="orderSide = $event; searchOrders()">
+            <option value="">Todas</option>
+            <option value="BUY">Compras</option>
+            <option value="SELL">Vendas</option>
+          </select>
+        </label>
+        <button class="search-button" type="button" (click)="searchOrders()">Buscar</button>
+        <span class="result-count">{{ orderTotal() }} ordens</span>
+      </div>
+
+      @if (loadingOrders()) {
         <p class="empty-state">Carregando ordens...</p>
       } @else if (orders().length === 0) {
-        <p class="empty-state">Ainda não há ordens registradas.</p>
+        <p class="empty-state">Nenhuma ordem encontrada para esta consulta.</p>
       } @else {
         <div class="table-wrap">
           <table>
@@ -174,6 +217,15 @@
             </tbody>
           </table>
         </div>
+        <nav class="pagination" aria-label="Páginas das ordens">
+          <span>Página {{ orderPage() }} de {{ orderPageCount() }}</span>
+          <div>
+            <button type="button" (click)="setOrderPage(orderPage() - 1)"
+                    [disabled]="orderPage() === 1">Anterior</button>
+            <button type="button" (click)="setOrderPage(orderPage() + 1)"
+                    [disabled]="orderPage() === orderPageCount()">Próxima</button>
+          </div>
+        </nav>
       }
     </section>
   </main>

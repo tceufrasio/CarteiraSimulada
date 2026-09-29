@@ -2,7 +2,7 @@
 
 .topbar {
   min-height: 76px;
-  padding: 16px max(24px, calc((100vw - 1160px) / 2));
+  padding: 16px clamp(20px, 3vw, 56px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,9 +35,9 @@
   font-size: 12px;
 }
 
-main { max-width: 1208px; margin: auto; padding: 42px 24px 80px; }
+main { width: 100%; margin: auto; padding: 42px clamp(20px, 3vw, 56px) 80px; }
 
-.intro { max-width: 760px; margin-bottom: 34px; }
+.intro { margin-bottom: 34px; }
 .eyebrow {
   margin: 0 0 9px;
   color: #167c69;
@@ -46,7 +46,7 @@ main { max-width: 1208px; margin: auto; padding: 42px 24px 80px; }
   letter-spacing: .14em;
 }
 .intro h1 {
-  max-width: 690px;
+  white-space: nowrap;
   margin: 0;
   font-size: clamp(32px, 4vw, 48px);
   line-height: 1.12;
@@ -73,7 +73,7 @@ main { max-width: 1208px; margin: auto; padding: 42px 24px 80px; }
 
 .main-grid {
   display: grid;
-  grid-template-columns: minmax(310px, .85fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
   align-items: start;
   gap: 20px;
 }
@@ -128,11 +128,6 @@ form button:hover:not(:disabled) { background: #0c5849; }
   font-weight: 700;
 }
 .empty-state { padding: 22px 0; color: #718086; line-height: 1.5; }
-.position { display: flex; justify-content: space-between; gap: 16px; padding: 17px 0; border-top: 1px solid #e8eeea; }
-.position strong, .position span { display: block; }
-.position span { margin-top: 5px; color: #718086; font-size: 12px; }
-.position-values { text-align: right; }
-
 .history { margin-top: 20px; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -140,9 +135,6 @@ th { padding: 12px; color: #728087; font-size: 11px; text-transform: uppercase; 
 td { padding: 16px 12px; border-top: 1px solid #e8eeea; font-size: 13px; white-space: nowrap; }
 .side { color: #116e55; font-weight: 700; }
 .side.sell { color: #a35a35; }
-.message { margin: 0 0 18px; padding: 14px 16px; border-radius: 9px; }
-.message-error { background: #fff0eb; color: #913b30; }
-.message-success { background: #e8f7ed; color: #176248; }
 
 @media (max-width: 760px) {
   .topbar { padding: 15px 20px; }
@@ -156,3 +148,7 @@ td { padding: 16px 12px; border-top: 1px solid #e8eeea; font-size: 13px; white-s
 .metric-value-invested { color: #2563a6; }
 .metric-value-profit { color: #16806a; }
 .metric-value-loss { color: #b83d32; }
+
+@media (max-width: 1100px) {
+  .intro h1 { white-space: normal; }
+}

@@ -27,6 +27,8 @@ builder.Services.AddSingleton<IOrderNotificationPublisher>(
 builder.Services.AddScoped<IOrderQueryRepository, EfOrderQueryRepository>();
 builder.Services.AddScoped<GetOrderByIdQueryHandler>();
 builder.Services.AddScoped<GetRecentOrdersQueryHandler>();
+builder.Services.AddScoped<IOrderSearchRepository, EfOrderSearchRepository>();
+builder.Services.AddScoped<SearchOrdersQueryHandler>();
 builder.Services.AddScoped<IPositionOrderReader, EfPositionOrderReader>();
 builder.Services.AddScoped<GetPositionQueryHandler>();
 builder.Services.AddScoped<GetOpenPositionsQueryHandler>();
@@ -166,6 +168,52 @@ app.MapGet("/api/orders/{id:guid}", async (
             order.CreatedAt
         });
 });
+app.MapGet("/api/orders/search", async (
+    int? page,
+    int? pageSize,
+    string? symbol,
+    string? side,
+    SearchOrdersQueryHandler handler,
+    CancellationToken cancellationToken) =>
+{
+    OrderSide? orderSide = null;
+    if (!string.IsNullOrWhiteSpace(side))
+    {
+        if (!Enum.TryParse<OrderSide>(side, true, out var parsedSide) ||
+            !Enum.IsDefined(parsedSide))
+            return Results.BadRequest(new { error = "Use BUY ou SELL no filtro de operação." });
+
+        orderSide = parsedSide;
+    }
+
+    try
+    {
+        var result = await handler.HandleAsync(
+            new SearchOrdersQuery(page ?? 1, pageSize ?? 10, symbol, orderSide),
+            cancellationToken);
+
+        return Results.Ok(new
+        {
+            Items = result.Items.Select(order => new
+            {
+                order.Id,
+                order.Symbol,
+                Side = order.Side.ToString().ToUpperInvariant(),
+                order.Quantity,
+                order.Price,
+                order.CreatedAt
+            }),
+            result.TotalCount,
+            result.Page,
+            result.PageSize
+        });
+    }
+    catch (ArgumentException exception)
+    {
+        return Results.BadRequest(new { error = exception.Message });
+    }
+});
+
 app.MapGet("/api/orders", async (
     GetRecentOrdersQueryHandler getRecentOrders,
     CancellationToken cancellationToken) =>
